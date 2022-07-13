@@ -188,3 +188,13 @@ pub fn sign_tx_by_input_group(
         .set_witnesses(signed_witnesses)
         .build()
 }
+
+#[test]
+fn test_blake2b() {
+    let mut blake2b = ckb_hash::new_blake2b();
+    let message = [0u8; 32];
+    let mut result = [0u8; 32];
+    blake2b.update(&message);
+    blake2b.finalize(&mut result);
+    println!("message: len({}) {:02x?}", result.len(), result);
+}

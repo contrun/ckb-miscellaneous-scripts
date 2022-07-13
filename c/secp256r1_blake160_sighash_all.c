@@ -94,7 +94,18 @@
 // object in molecule serialization format. The lock field of said WitnessArgs
 // object should contain a 65-byte recoverable signature to prove ownership.
 
+void blake2b_test() {
+  unsigned char result[BLAKE2B_BLOCK_SIZE];
+  unsigned char message[BLAKE2B_BLOCK_SIZE];
+  blake2b_state blake2b_ctx;
+  blake2b_init(&blake2b_ctx, BLAKE2B_BLOCK_SIZE);
+  blake2b_update(&blake2b_ctx, message, BLAKE2B_BLOCK_SIZE);
+  blake2b_final(&blake2b_ctx, result, BLAKE2B_BLOCK_SIZE);
+  buf_print("blake2b result blake2b_test", result, BLAKE2B_BLOCK_SIZE);
+}
+
 int main() {
+  // blake2b_test();
   int ret;
   uint64_t len = 0;
   unsigned char temp[TEMP_SIZE];

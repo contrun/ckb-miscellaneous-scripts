@@ -674,3 +674,23 @@ fn test_sighash_all_cover_extra_witnesses() {
     let error = format!("error code {}", ERROR_PUBKEY_BLAKE160_HASH);
     assert!(verify_result.unwrap_err().to_string().contains(&error));
 }
+
+#[test]
+fn test_sign_message() {
+    let message = &hex!("7c282c901b5573e88833a21bacc598e94db02405f81ed499c697bea61d093e5d");
+    println!("message: len({}) {:02x?}", message.len(), message);
+    let privkey = &get_random_signing_key();
+    let pubkey = privkey.verifying_key();
+    let pubkey_point = pubkey.to_encoded_point(false);
+    let pubkey_bytes = pubkey_point.as_bytes();
+    println!("pubkey: len({}) {:02x?}", pubkey_bytes.len(), pubkey_bytes);
+    dbg!(&privkey, &pubkey, &message);
+    let signature = privkey.sign(message);
+    let signature_bytes = signature.as_bytes();
+    println!(
+        "sig: len({}) {:02x?}",
+        signature_bytes.len(),
+        signature_bytes
+    );
+    // dbg!(&privkey, &pubkey, &signature_bytes, &message);
+}
