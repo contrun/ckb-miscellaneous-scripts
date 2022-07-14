@@ -120,6 +120,29 @@ static const u8 test_pub_key[] = {
     0x56, 0x28, 0xbc, 0x64, 0xf2, 0xf1, 0xb2, 0x0c, 0x2d, 0x7e, 0x9f,
     0x51, 0x77, 0xa3, 0xc2, 0x94, 0xd4, 0x46, 0x22, 0x99};
 
+const u8 buf_size = 64;
+u8[buf_size] get_public_key_aff_buf(const ec_pub_key *pub_key) {
+  u8 temp_buf[buf_size];
+  local_memset(&temp_buf, 0, sizeof(temp_buf));
+  if (ec_pub_key_export_to_aff_buf(pub_key, temp_buf, buf_size)) {
+    printf("EXPORT PUBLIC KEY TO BUF FAILED\n");
+  }
+  return temp_buf;
+}
+
+ATTRIBUTE_WARN_UNUSED_RET static int
+secp256r1_verify_signature_with_aff_buf(const u8 *pub_key_buf,
+                                        u8 pub_key_buf_len, u8 *sig, u8 siglen,
+                                        const u8 *m, u32 mlen) {
+  ec_pub_key pk;
+  if (ec_pub_key_import_from_aff_buf(&pk, &SECP256R1_EC_PARAMS, pub_key_buf,
+                                     pub_key_buf_len, SIG_ALGO)) {
+    ext_printf("importing public key from buffer FAILED\n");
+    return -1;
+  }
+  return secp256r1_verify_signature(sig, siglen, &pk, m, mlen);
+}
+
 void my_pub_key_print(char *msg, const ec_pub_key *pub_key) {
   const u8 buf_size = 64;
   u8 temp_buf[buf_size];

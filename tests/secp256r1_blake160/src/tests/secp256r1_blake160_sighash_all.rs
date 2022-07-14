@@ -40,6 +40,13 @@ fn debug_printer(script: &Byte32, msg: &str) {
 }
 
 fn get_pk_bytes(pubkey: &VerifyingKey) -> Bytes {
+    // let point = pubkey.to_encoded_point(false);
+    // let le_bytes = &point.as_bytes()[1..];
+    // let len = le_bytes.len();
+    // let x = &le_bytes[0..len / 2];
+    // let y = &le_bytes[len / 2..];
+    // let be_vec: Vec<u8> = x.iter().rev().chain(y.iter().rev()).cloned().collect();
+    // be_vec.into()
     Bytes::copy_from_slice(&pubkey.to_encoded_point(false).as_bytes()[1..])
 }
 
