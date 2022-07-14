@@ -23,7 +23,7 @@ use ckb_types::{
 };
 use hex_literal::hex;
 use rand::rngs::StdRng;
-use rand::{thread_rng, Rng, SeedableRng};
+use rand::{thread_rng, CryptoRng, Rng, RngCore, SeedableRng};
 
 const ERROR_ENCODING: i8 = -2;
 const ERROR_WITNESS_SIZE: i8 = -22;
@@ -227,6 +227,14 @@ fn get_sample_signing_key() -> SigningKey {
     let sk = SigningKey::from_bytes(x).unwrap();
     sk
 }
+
+fn get_random_signing_key(rng: impl CryptoRng + RngCore) -> SigningKey {
+    SigningKey::random(rng)
+}
+
+fn get_random_signing_keys(n: usize) -> Vec<SigningKey> {
+    [0..n].iter().map().collect();
+    let mut rng = rand::rngs::SmallRng::seed_from_u64(42);
     let x = &hex!("c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721");
     let sk = SigningKey::from_bytes(x).unwrap();
     sk
@@ -235,7 +243,7 @@ fn get_sample_signing_key() -> SigningKey {
 #[test]
 fn test_sighash_all_unlock() {
     let mut data_loader = DummyDataLoader::new();
-    let privkey = get_random_signing_key();
+    let privkey = get_sample_signing_key();
     let pubkey = privkey.verifying_key();
     let tx = gen_tx(&mut data_loader, get_pk_bytes(&pubkey));
     let tx = sign_tx(tx, &privkey);
