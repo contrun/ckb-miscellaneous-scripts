@@ -14,7 +14,7 @@ PASSED_MBEDTLS_CFLAGS := -Os -fPIC -nostdinc -nostdlib -DCKB_DECLARATION_ONLY -I
 CFLAGS_BLST := -fno-builtin-printf -Ideps/blst/bindings $(subst ckb-c-stdlib,ckb-c-stdlib-202106,$(CFLAGS))
 CKB_VM_CLI := ckb-vm-b-cli
 
-CFLAGS_LIBECC := -DWORDSIZE=64 -DWITH_STDLIB -DWITH_BLANK_EXTERNAL_DEPENDENCIES -fPIC
+CFLAGS_LIBECC := -DWORDSIZE=64 -DWITH_STDLIB -DWITH_BLANK_EXTERNAL_DEPENDENCIES -fPIC -g
 CFLAGS_LINK_TO_LIBECC := -DWORDSIZE=64 -DWITH_STDLIB -DWITH_BLANK_EXTERNAL_DEPENDENCIES -fno-builtin-printf -I deps/libecc/src -I deps/libecc/src/external_deps
 
 MOLC := moleculec
@@ -41,6 +41,11 @@ build/htlc: c/htlc.c build/secp256k1_blake2b_sighash_all_lib.h
 build/secp256k1_blake2b_sighash_all_lib.h: build/generate_data_hash build/secp256k1_blake2b_sighash_all_lib.so
 	$< build/secp256k1_blake2b_sighash_all_lib.so secp256k1_blake2b_sighash_all_data_hash > $@
 
+build/secp256r1_blake160_sighash_bench: c/secp256r1_blake160_sighash_bench.c c/common.h c/utils.h c/secp256r1_helper.h deps/libecc/build/libarith.a deps/libecc/build/libec.a deps/libecc/build/libsign.a
+	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC) $(LDFLAGS) -o $@ $< deps/libecc/build/libarith.a deps/libecc/build/libec.a deps/libecc/build/libsign.a
+	$(OBJCOPY) --only-keep-debug $@ $@.debug
+	$(OBJCOPY) --strip-debug --strip-all $@ $@.stripped
+
 build/secp256r1_blake160_sighash_all: c/secp256r1_blake160_sighash_all.c c/common.h c/utils.h c/secp256r1_helper.h deps/libecc/build/libarith.a deps/libecc/build/libec.a deps/libecc/build/libsign.a
 	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC) $(LDFLAGS) -o $@ $< deps/libecc/build/libarith.a deps/libecc/build/libec.a deps/libecc/build/libsign.a
 	$(OBJCOPY) --only-keep-debug $@ $@.debug
@@ -49,7 +54,7 @@ build/secp256r1_blake160_sighash_all: c/secp256r1_blake160_sighash_all.c c/commo
 build/secp256r1_blake160_c: tests/secp256r1_blake160_c/main.c deps/libecc/build/libarith.a deps/libecc/build/libec.a deps/libecc/build/libsign.a
 	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC) $(LDFLAGS) -o $@ $^
 	$(OBJCOPY) --only-keep-debug $@ $@.debug
-	$(OBJCOPY) --strip-debug --strip-all $@
+	$(OBJCOPY) --strip-debug --strip-all $@ $@.stripped
 
 build/secp256k1_blake2b_sighash_all_dual: c/secp256k1_blake2b_sighash_all_dual.c build/secp256k1_data_info.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -fPIC -fPIE -pie -Wl,--dynamic-list c/dual.syms -o $@ $<
