@@ -22,7 +22,7 @@ pub const LOCK_WITNESS_SIZE: usize = 128;
 
 lazy_static! {
     pub static ref SIGHASH_ALL_BIN: Bytes =
-        Bytes::from(&include_bytes!("../../../../build/secp256r1_blake160_sighash_all")[..]);
+        Bytes::from(&include_bytes!("../../../../build/secp256r1_blake160_sighash_bench")[..]);
 }
 
 #[derive(Default)]

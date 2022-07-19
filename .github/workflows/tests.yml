@@ -19,11 +19,10 @@ jobs:
       run: cargo test
       working-directory: ./tests/secp256r1_blake160
 
-    - name: Set up QEMU
+    - name: Set up ckb-vm-runner
       run: |
-        sudo apt update
-        sudo apt install -y qemu-user qemu-user-binfmt
+        cargo install --example ckb-vm-runner --branch rvv --git https://github.com/nervosnetwork/ckb-vm.git --features asm ckb-vm
 
     - name: Run tests for secp256r1_blake160 c
       run: |
-        ./build/secp256r1_blake160_c
+        ckb-vm-runner ./build/secp256r1_blake160_c
