@@ -18,6 +18,7 @@ CKB_VM_CLI := ckb-vm-b-cli
 LIBECC_PATH := deps/libecc
 CFLAGS_LIBECC := -DWORDSIZE=64 -DWITH_STDLIB -DWITH_BLANK_EXTERNAL_DEPENDENCIES -fPIC -g
 CFLAGS_LINK_TO_LIBECC := -DWORDSIZE=64 -DWITH_STDLIB -DWITH_BLANK_EXTERNAL_DEPENDENCIES -fno-builtin-printf -I ${LIBECC_PATH}/src -I ${LIBECC_PATH}/src/external_deps
+LIBECC_FILES := ${LIBECC_PATH}/build/libarith.a ${LIBECC_PATH}/build/libec.a ${LIBECC_PATH}/build/libsign.a
 
 MOLC := moleculec
 MOLC_VERSION := 0.7.0
@@ -44,22 +45,22 @@ build/secp256k1_blake2b_sighash_all_lib.h: build/generate_data_hash build/secp25
 	$< build/secp256k1_blake2b_sighash_all_lib.so secp256k1_blake2b_sighash_all_data_hash > $@
 
 build/secp256r1_blake160_sighash_lay2dev_bench: c/secp256r1_blake160_sighash_bench.c libecc
-	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC) $(LDFLAGS) -o $@ c/secp256r1_blake160_sighash_lay2dev_bench.c ${LIBECC_PATH}/build/libarith.a ${LIBECC_PATH}/build/libec.a ${LIBECC_PATH}/build/libsign.a
+	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC) $(LDFLAGS) -o $@ c/secp256r1_blake160_sighash_lay2dev_bench.c ${LIBECC_FILES}
 	$(OBJCOPY) --only-keep-debug $@ $@.debug
 	$(OBJCOPY) --strip-debug --strip-all $@ $@.stripped
 
 build/secp256r1_blake160_sighash_bench: c/secp256r1_blake160_sighash_bench.c c/secp256r1_helper.h libecc
-	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC) $(LDFLAGS) -o $@ c/secp256r1_blake160_sighash_bench.c c/secp256r1_helper.h ${LIBECC_PATH}/build/libarith.a ${LIBECC_PATH}/build/libec.a ${LIBECC_PATH}/build/libsign.a
+	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC) $(LDFLAGS) -o $@ c/secp256r1_blake160_sighash_bench.c c/secp256r1_helper.h ${LIBECC_FILES}
 	$(OBJCOPY) --only-keep-debug $@ $@.debug
 	$(OBJCOPY) --strip-debug --strip-all $@ $@.stripped
 
-build/secp256r1_blake160_sighash_all: c/secp256r1_blake160_sighash_all.c c/common.h c/utils.h c/secp256r1_helper.h libecc
-	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC) $(LDFLAGS) -o $@ c/secp256r1_blake160_sighash_all.c c/common.h c/utils.h c/secp256r1_helper.h ${LIBECC_PATH}/build/libarith.a ${LIBECC_PATH}/build/libec.a ${LIBECC_PATH}/build/libsign.a
+build/secp256r1_blake160_sighash_all: c/secp256r1_blake160_sighash_all.c c/common.h c/secp256r1_helper.h libecc
+	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC) $(LDFLAGS) -o $@ c/secp256r1_blake160_sighash_all.c c/common.h c/secp256r1_helper.h ${LIBECC_FILES}
 	$(OBJCOPY) --only-keep-debug $@ $@.debug
 	$(OBJCOPY) --strip-debug --strip-all $@
 
 build/secp256r1_blake160_c: tests/secp256r1_blake160_c/main.c libecc
-	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC) $(LDFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC) $(LDFLAGS) -o $@ $< ${LIBECC_FILES}
 	$(OBJCOPY) --only-keep-debug $@ $@.debug
 	$(OBJCOPY) --strip-debug --strip-all $@ $@.stripped
 
@@ -200,4 +201,4 @@ clean:
 
 dist: clean all
 
-.PHONY: all all-via-docker dist clean fmt
+.PHONY: all all-via-docker dist clean fmt libecc
