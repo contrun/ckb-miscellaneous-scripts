@@ -43,6 +43,11 @@ build/htlc: c/htlc.c build/secp256k1_blake2b_sighash_all_lib.h
 build/secp256k1_blake2b_sighash_all_lib.h: build/generate_data_hash build/secp256k1_blake2b_sighash_all_lib.so
 	$< build/secp256k1_blake2b_sighash_all_lib.so secp256k1_blake2b_sighash_all_data_hash > $@
 
+build/secp256r1_blake160_sighash_lay2dev_bench: c/secp256r1_blake160_sighash_bench.c libecc
+	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC) $(LDFLAGS) -o $@ c/secp256r1_blake160_sighash_lay2dev_bench.c ${LIBECC_PATH}/build/libarith.a ${LIBECC_PATH}/build/libec.a ${LIBECC_PATH}/build/libsign.a
+	$(OBJCOPY) --only-keep-debug $@ $@.debug
+	$(OBJCOPY) --strip-debug --strip-all $@ $@.stripped
+
 build/secp256r1_blake160_sighash_bench: c/secp256r1_blake160_sighash_bench.c c/secp256r1_helper.h libecc
 	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC) $(LDFLAGS) -o $@ c/secp256r1_blake160_sighash_bench.c c/secp256r1_helper.h ${LIBECC_PATH}/build/libarith.a ${LIBECC_PATH}/build/libec.a ${LIBECC_PATH}/build/libsign.a
 	$(OBJCOPY) --only-keep-debug $@ $@.debug
