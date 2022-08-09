@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 rlua = "0.19.4"
+bitcoin_hashes = "0.11"
+secp256k1 = "0.24.0"
