@@ -17,6 +17,13 @@ static const char *hash_algorithm = "SHA256";
 const uint32_t projective_buffer_size = 96;
 const uint32_t affine_buffer_size = 64;
 
+int get_random(unsigned char *buf, u16 len) {
+  for (int i = 0; i < len; i++) {
+    buf[i] = 0;
+  }
+  return 0;
+}
+
 static int string_to_params(const char *ec_name, const char *ec_sig_name,
                             ec_sig_alg_type *sig_type,
                             const ec_str_params **ec_str_p,
