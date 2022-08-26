@@ -85,6 +85,11 @@ build/secp256r1_blake160_c: tests/secp256r1_blake160_c/main.c libecc
 	$(OBJCOPY) --only-keep-debug $@ $@.debug
 	$(OBJCOPY) --strip-debug --strip-all $@ $@.stripped
 
+build/secp256r1_signature_dual: c/secp256r1_signature_dual.c c/common.h libecc-optimized
+	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC_OPTIMIZED) $(LDFLAGS) -fPIC -fPIE -pie -Wl,--dynamic-list c/secp256r1_dual.syms -o $@ $<
+	$(OBJCOPY) --only-keep-debug $@ $@.debug
+	$(OBJCOPY) --strip-debug --strip-all $@
+
 build/secp256k1_blake2b_sighash_all_dual: c/secp256k1_blake2b_sighash_all_dual.c build/secp256k1_data_info.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -fPIC -fPIE -pie -Wl,--dynamic-list c/dual.syms -o $@ $<
 	$(OBJCOPY) --only-keep-debug $@ $@.debug
