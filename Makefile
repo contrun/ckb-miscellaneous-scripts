@@ -79,6 +79,9 @@ build/secp256r1_bench: c/secp256r1_blake160_sighash_bench.c libecc-riscv-optimiz
 	cp $@ $@.debug
 	$(OBJCOPY) --strip-debug --strip-all $@ $@.stripped
 
+secp256r1_bench-via-docker:
+	docker run --user ${DOCKER_USER} --rm -v `pwd`:/code ${BUILDER_DOCKER} bash -c "cd /code && make build/secp256r1_bench"
+
 # This is a lock script
 build/secp256r1_blake160_sighash_all: c/secp256r1_blake160_sighash_all.c c/common.h libecc-riscv-optimized
 	$(CC) $(CFLAGS) $(CFLAGS_LINK_TO_LIBECC_OPTIMIZED) $(LDFLAGS) -o $@ c/secp256r1_blake160_sighash_all.c c/common.h ${LIBECC_OPTIMIZED_FILES}
